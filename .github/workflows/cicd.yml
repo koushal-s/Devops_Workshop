@@ -1,0 +1,51 @@
+name: CI/CD Example
+on: 
+  push: 
+    branches: ['master']
+  workflow_dispatch: 
+ defaults:
+  run:
+    working_directory: ./
+ jobs:
+  Build:
+    name: build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Cloning the project repo
+      uses: actions/checkout@v3
+      
+    - name: Install Nodejs
+      uses: actions/setup-node@v3
+      with:
+        node-version: 14.x
+        
+     - name: NPM Install
+       run: npm install
+       
+     - name: Build Project
+       run: npm run build
+       
+     - name: Upload build files
+       uses: actions/upload-artifact@v3
+       with: 
+        name: production
+        path: ./build
+        
+  deploy:
+   name: deploy
+   needs: build    
+   runs-on: ubuntu-latest
+   steps: 
+   - name: downloading artifacts
+     uses: action/download-atrifact@v3
+     with:
+      name: download
+      path: ./build
+    -name: Deploy to github pages
+     uses: crazy-max/ghaction-github-pages@v3
+     with:
+      target_branch: gh-pages
+      build-dir: ./build
+      - name: Close Stale Issues
+        uses: actions/stale@v6.0.1
