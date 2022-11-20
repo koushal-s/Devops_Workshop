@@ -7,7 +7,7 @@ on:
   workflow_dispatch: 
 jobs:
   job1:
-   emv: 
+   env: 
     JOB1_VARIABLE: "This is the JOB1 variable"
    strategy: 
      matrix:
@@ -16,8 +16,8 @@ jobs:
    runs-on: ${{matrix.os}}
    steps: 
     - run: echo $JOB1_VARIABLE
-   job2:
-    emv:
+  job2:
+    env:
      JOB2_VARIABLE: "This is the variable for job 2"
     strategy: 
      matrix:
@@ -26,16 +26,16 @@ jobs:
     runs-on: ${{matrix.os}}
     steps: 
     - run: ./server.sh
-    job3:
+  job3:
       needs: job2
       strategy: 
-       matrix:
-       version: [10,12,14]
-       os: [ubuntu.latest, windows.latest, macOS.latest]
+        matrix:
+         version: [10,12,14]
+         os: [ubuntu.latest, windows.latest, macOS.latest]
       runs-on: ${{matrix.os}}
       steps: 
        - run: echo "Runs if Job 2 is successful"
-    job4:
+  job4:
       if: always()
       needs: job2
       strategy: 
